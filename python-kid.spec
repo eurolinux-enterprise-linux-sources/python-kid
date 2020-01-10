@@ -2,7 +2,7 @@
 
 Name:           python-kid
 Version:        0.9.6
-Release:        5.1%{?dist}
+Release:        6%{?dist}
 Summary:        Kid - A simple and pythonic XML template language
 
 Group:          Applications/Publishing
@@ -11,6 +11,11 @@ URL:            http://www.kid-templating.org/
 Source0:        http://www.kid-templating.org/dist/%{version}/kid-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
+
+# Make serialization.py escape > to &gt; which fixes some cases
+# of invalid xml being generated.
+# Resolves: rhbz#633271
+Patch0: serialization.py-escape.patch
 
 BuildRequires:  python-setuptools-devel
 BuildRequires:  python-docutils
@@ -25,6 +30,7 @@ byte-code and may be imported and used like normal Python modules.
 %prep
 %setup -q -n kid-%{version}
 
+%patch0 -p1
 
 %build
 %{__python} setup.py build
@@ -59,6 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 29 2016 Charalampos Stratakis <cstratak@redhat.com> - 0.9.6-6
+- Make serialization.py escape > to &gt;
+Resolves: rhbz#633271
+
 * Mon Nov 30 2009 Dennis Gregorovic <dgregor@redhat.com> - 0.9.6-5.1
 - Rebuilt for RHEL 6
 
